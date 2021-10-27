@@ -27,8 +27,9 @@ export const CheckOutProduct = ({
           <p> Color ID :</p>
           <p> Quantity :</p>
           <p> Size ID :</p>
-          <p> Total Price : </p>
+          <p> Price : </p>
         </div>
+
         <div className={'flex-right'}>
           <h1 className={'blank-heading'}> c</h1>
           <p className={'para'}> {productColor}</p>
@@ -37,8 +38,8 @@ export const CheckOutProduct = ({
           <p className={'para'}> $ {productQuantity * (productPrice / 100)} </p>
         </div>
       </div>
+
       <div className={'product-div'}>
-        <button className={'checkout-btn'}>Checkout</button>
         <button className={'cancel-btn'} onClick={() => deleteRecord()}>
           Delete
         </button>

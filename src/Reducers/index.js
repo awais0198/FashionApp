@@ -1,6 +1,6 @@
-import { ADD_ITEM, REMOVE_ITEM } from 'Actions'
+import { ADD_ITEM, REMOVE_ITEM, ADD_MSG } from 'Actions'
 
-import { initialState } from 'initialState'
+import { initialState } from 'Reducers/initialState'
 
 const Reducers = (state = initialState, action) => {
   let copyState,
@@ -9,6 +9,7 @@ const Reducers = (state = initialState, action) => {
     sizeIndex,
     colorIndex,
     quantity = undefined
+
   switch (action.type) {
     case ADD_ITEM:
       copyState = { ...state }
@@ -33,12 +34,17 @@ const Reducers = (state = initialState, action) => {
 
       cart.splice(action.payload.id - 1, 1)
 
-      sizeIndex = sizes.findIndex(size => size.id == action.payload.size)
+      sizeIndex = sizes.findIndex(size => size.abbreviation == action.payload.size)
       colorIndex = sizes[sizeIndex].colors.findIndex(color => color.name == action.payload.color)
       quantity = sizes[sizeIndex].colors[colorIndex].quantity
       sizes[sizeIndex].colors[colorIndex].quantity = quantity - action.payload.quantity
 
       return { ...copyState, sizes: sizes, cart: cart }
+
+    case ADD_MSG:
+      copyState = { ...state }
+      copyState.chat.push(action.payload.msg)
+      return { ...copyState }
 
     default:
       return state

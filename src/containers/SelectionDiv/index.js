@@ -1,30 +1,43 @@
+import { FaCheck } from 'react-icons/fa'
 import { injectStyle } from 'react-toastify/dist/inject-style'
+import { ToastContainer, toast } from 'react-toastify'
 import { useSelector, useDispatch } from 'react-redux'
 import { useState } from 'react'
-import { ToastContainer, toast } from 'react-toastify'
 import Tooltip from '@mui/material/Tooltip'
 
-import 'containers/SelectionDiv/styles.scss'
 import { ADD_ITEM } from 'Actions'
-
-const ORDER_INITIAL_STATE = { quantity: 0, sizeId: 0, colorId: 'null' }
+import {
+  COLOR_SELECTED,
+  COLOR_UNSELECTED,
+  ORDER_INITIAL_STATE,
+  SELECTED,
+  UNSELECTED
+} from 'Helpers'
+import 'containers/SelectionDiv/styles.scss'
 
 export const SelectionDiv = () => {
   const dispatch = useDispatch()
-  let [itemQuantity, setQuantity] = useState(0)
+  const [itemQuantity, setQuantity] = useState(0)
+  const [productQuantity, setProductQuantity] = useState(0)
+  const [sizeSelected, setSelectedSize] = useState(-1)
+  const [colorSelected, setSelectedColor] = useState('')
   const productDetails = useSelector(state => state.product)
-  let [colors, showColors] = useState(productDetails.sizes[0].colors)
-  let [order, setOrder] = useState(ORDER_INITIAL_STATE)
+  const [colors, showColors] = useState(productDetails.sizes[0].colors)
+  const [order, setOrder] = useState(ORDER_INITIAL_STATE)
 
   const getSizes = () =>
-    productDetails.sizes.map(size => (
+    productDetails.sizes.map((size, index) => (
       <button
         className={'rounded-button'}
         key={size.id}
         onClick={() => {
           setOrder({ ...order, sizeId: size.id })
           showColors(size.colors)
+          setSelectedSize(index)
+          setSelectedColor('')
+          setQuantity(0)
         }}
+        style={index == sizeSelected ? SELECTED : UNSELECTED}
       >
         {size.abbreviation}
       </button>
@@ -48,8 +61,19 @@ export const SelectionDiv = () => {
           className={'rounded-color-button'}
           key={color.name}
           style={{ backgroundColor: `${color.name}` }}
-          onClick={() => setOrder({ ...order, colorId: color.name })}
-        ></button>
+          onClick={() => {
+            setOrder({ ...order, colorId: color.name })
+            setSelectedColor(color.name)
+            setProductQuantity(color.quantity)
+            setQuantity(0)
+          }}
+        >
+          {colorSelected === color.name ? (
+            <FaCheck style={COLOR_SELECTED} />
+          ) : (
+            <FaCheck style={COLOR_UNSELECTED} />
+          )}
+        </button>
       ) : (
         <> </>
       )
@@ -69,6 +93,8 @@ export const SelectionDiv = () => {
       )
       setOrder(ORDER_INITIAL_STATE)
       setQuantity(0)
+      setSelectedSize(-1)
+      setSelectedColor('')
     } else if (order.sizeId === 0) {
       toast.error('PLEASE SELECT A SIZE')
     } else if (order.colorId === 'null') {
@@ -96,6 +122,7 @@ export const SelectionDiv = () => {
       </p>
       {getColors()}
       <hr />
+
       <div className={'guide-div'}>
         <p className={'ps'}>
           <b>Select Material</b>
@@ -111,7 +138,14 @@ export const SelectionDiv = () => {
         <b> Select Quantity </b>{' '}
       </p>
       <div className={'count-div'}>
-        <button className={'counter-btn'} onClick={() => setQuantity(itemQuantity + 1)}>
+        <button
+          className={'counter-btn'}
+          onClick={() => {
+            productQuantity - itemQuantity == 0
+              ? toast.error('We do not have much of this')
+              : setQuantity(itemQuantity + 1)
+          }}
+        >
           +
         </button>
         <div className={'quantity-div'}>{itemQuantity}</div>
