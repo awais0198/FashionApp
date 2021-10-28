@@ -1,3 +1,7 @@
+.chats {
+  height: 320px;
+}
+
 .chat-div {
   background-color: #E9E9E9 ;
   border-radius: 10px;
@@ -64,10 +68,12 @@
 
 .left-msg {
   margin-left: 10px;
+  margin-right: 50px;
   text-align: left;
 }
 
 .right-msg {
   margin-right: 10px;
+  margin-left: 50px;
   text-align: right;
 }

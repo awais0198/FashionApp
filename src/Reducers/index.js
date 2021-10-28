@@ -16,16 +16,19 @@ const Reducers = (state = initialState, action) => {
       sizes = [...copyState.product.sizes]
       cart = [...copyState.cart]
 
-      cart.push(action.payload.checkout)
+      cart = [...copyState.cart, action.payload.checkout]
 
       sizeIndex = sizes.findIndex(size => size.id == action.payload.checkout.sizeId)
-      colorIndex = sizes[sizeIndex].colors.findIndex(
-        color => color.name == action.payload.checkout.colorId
-      )
-      quantity = sizes[sizeIndex].colors[colorIndex].quantity
-      sizes[sizeIndex].colors[colorIndex].quantity = quantity - action.payload.checkout.quantity
-
-      return { ...copyState, sizes: sizes, cart: cart }
+      if (sizeIndex == -1) {
+        return state
+      } else {
+        colorIndex = sizes[sizeIndex].colors.findIndex(
+          color => color.name == action.payload.checkout.colorId
+        )
+        quantity = sizes[sizeIndex].colors[colorIndex].quantity
+        sizes[sizeIndex].colors[colorIndex].quantity = quantity - action.payload.checkout.quantity
+        return { ...copyState, sizes: sizes, cart: cart }
+      }
 
     case REMOVE_ITEM:
       copyState = { ...state }
@@ -35,11 +38,14 @@ const Reducers = (state = initialState, action) => {
       cart.splice(action.payload.id - 1, 1)
 
       sizeIndex = sizes.findIndex(size => size.abbreviation == action.payload.size)
-      colorIndex = sizes[sizeIndex].colors.findIndex(color => color.name == action.payload.color)
-      quantity = sizes[sizeIndex].colors[colorIndex].quantity
-      sizes[sizeIndex].colors[colorIndex].quantity = quantity - action.payload.quantity
-
-      return { ...copyState, sizes: sizes, cart: cart }
+      if (sizeIndex == -1) {
+        return { ...copyState }
+      } else {
+        colorIndex = sizes[sizeIndex].colors.findIndex(color => color.name == action.payload.color)
+        quantity = sizes[sizeIndex].colors[colorIndex].quantity
+        sizes[sizeIndex].colors[colorIndex].quantity = quantity - action.payload.quantity
+        return { ...copyState, sizes: sizes, cart: cart }
+      }
 
     case ADD_MSG:
       copyState = { ...state }

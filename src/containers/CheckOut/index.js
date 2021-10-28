@@ -31,7 +31,10 @@ export const CheckOut = () => {
   }
 
   useEffect(() => {
-    cart.length === 0 ? setTotalAmount(0) : setTotalAmount(((cartSum(cart) || 0) * price) / 100)
+    if (!cart.length) {
+      return setTotalAmount(0)
+    }
+    setTotalAmount(((cartSum(cart) || 0) * price) / 100)
   }, [cart])
 
   return (

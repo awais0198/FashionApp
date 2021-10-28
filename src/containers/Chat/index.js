@@ -51,7 +51,7 @@ export const ChatModal = () => {
       </div>
 
       <div className={'chat-div'} style={{ display: isHidden ? 'block' : 'none' }}>
-        {getChats()}
+        <div className={'chats'}>{getChats()}</div>
 
         <div className={'input-send'}>
           <input
